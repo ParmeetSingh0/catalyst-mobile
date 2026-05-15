@@ -1,0 +1,65 @@
+name: "Build React Native Unsigned IPA"
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Match your local Node version
+          cache: 'npm' # Use 'yarn' if you use yarn
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          # If you use yarn, uncomment the line below and comment npm install
+          # yarn install
+
+      - name: Setup Ruby and Cache Pods
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      - name: Build Xcode Archive (Unsigned)
+        run: |
+          xcodebuild -workspace ios/catalyst-mobile.xcworkspace \
+            -scheme catalyst-mobile \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $RUNNER_TEMP/catalyst-mobile.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            archive
+
+      - name: Package Into Unsigned IPA
+        run: |
+          mkdir -p $RUNNER_TEMP/Payload
+          # Copy the compiled .app file to the Payload directory
+          cp -r $RUNNER_TEMP/catalyst-mobile.xcarchive/Products/Applications/*.app $RUNNER_TEMP/Payload/
+          # Compress into an .ipa file
+          cd $RUNNER_TEMP
+          zip -r ReactNativeApp-unsigned.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-native-ipa
+          path: ${{ runner.temp }}/ReactNativeApp-unsigned.ipa
