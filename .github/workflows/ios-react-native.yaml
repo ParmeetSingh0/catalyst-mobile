@@ -1,4 +1,4 @@
-name: "Build React Native Unsigned IPA"
+name: 'Build React Native Unsigned IPA'
 
 on: [workflow_dispatch] # Allows you to run it manually from GitHub
 
@@ -41,11 +41,11 @@ jobs:
 
       - name: Build Xcode Archive (Unsigned)
         run: |
-          xcodebuild -workspace ios/catalyst-mobile.xcworkspace \
-            -scheme catalyst-mobile \
+          xcodebuild -workspace ios/catalystmobile.xcworkspace \
+            -scheme catalystmobile \
             -configuration Release \
             -sdk iphoneos \
-            -archivePath $RUNNER_TEMP/catalyst-mobile.xcarchive \
+            -archivePath $RUNNER_TEMP/catalystmobile.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir -p $RUNNER_TEMP/Payload
           # Copy the compiled .app file to the Payload directory
-          cp -r $RUNNER_TEMP/catalyst-mobile.xcarchive/Products/Applications/*.app $RUNNER_TEMP/Payload/
+          cp -r $RUNNER_TEMP/catalystmobile.xcarchive/Products/Applications/*.app $RUNNER_TEMP/Payload/
           # Compress into an .ipa file
           cd $RUNNER_TEMP
           zip -r ReactNativeApp-unsigned.ipa Payload
