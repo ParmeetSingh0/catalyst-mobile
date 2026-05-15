@@ -35,7 +35,8 @@ jobs:
           cd ..
 
       - name: List iOS directory contents
-	run: ls -la ios/
+        run: |
+          ls -la ios/
 
       - name: Build Xcode Archive (Unsigned)
         run: |
