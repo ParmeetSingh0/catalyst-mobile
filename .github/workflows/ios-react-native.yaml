@@ -34,10 +34,8 @@ jobs:
           pod install
           cd ..
 
-      - name: List Files for Diagnostics
-        run: |
-          echo "=== Root Directory ==="
-          ls -R
+      - name: List iOS directory contents
+	run: ls -la ios/
 
       - name: Build Xcode Archive (Unsigned)
         run: |
