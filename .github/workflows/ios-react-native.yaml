@@ -34,6 +34,11 @@ jobs:
           pod install
           cd ..
 
+      - name: List Files for Diagnostics
+        run: |
+          echo "=== Root Directory ==="
+          ls -R
+
       - name: Build Xcode Archive (Unsigned)
         run: |
           xcodebuild -workspace ios/catalyst-mobile.xcworkspace \
