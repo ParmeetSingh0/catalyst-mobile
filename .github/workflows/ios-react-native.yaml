@@ -1,8 +1,6 @@
 name: "Build React Native Unsigned IPA"
 
-on:
-  push:
-    branches: [ "main" ]
+on: [workflow_dispatch] # Allows you to run it manually from GitHub
 
 jobs:
   build:
